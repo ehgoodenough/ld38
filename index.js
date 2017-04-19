@@ -63,14 +63,138 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 0);
+/******/ 	return __webpack_require__(__webpack_require__.s = 2);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
+/***/ (function(module, exports, __webpack_require__) {
+
+__webpack_require__(4)()
+
+
+/***/ }),
+/* 1 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+module.exports = function () {
+	return /[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-PRZcf-nqry=><]/g;
+};
+
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _do = __webpack_require__(0);
+
+var _do2 = _interopRequireDefault(_do);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+document.getElementById("frame").innerHTML = "Hello World!";
+
+/***/ }),
+/* 3 */
 /***/ (function(module, exports) {
 
-throw new Error("Module build failed: Error: Algorithm \"sha1\"  not supported. supported values: passthrough\n    at applyDefaults (/Users/Andrew/Projects/ld38/node_modules/object-hash/index.js:89:11)\n    at objectHash (/Users/Andrew/Projects/ld38/node_modules/object-hash/index.js:31:13)\n    at Object.module.exports (/Users/Andrew/Projects/ld38/node_modules/eslint-loader/index.js:167:20)");
+function microAjax(url, callbackFunction)
+{
+  this.bindFunction = function (caller, object) {
+    return function() {
+      return caller.apply(object, [object]);
+    };
+  };
+
+  this.stateChange = function (object) {
+    if (this.request.readyState==4)
+      this.callbackFunction(this.request);
+  };
+
+  this.getRequest = function() {
+    if (window.ActiveXObject)
+      return new ActiveXObject('Microsoft.XMLHTTP');
+    else if (window.XMLHttpRequest)
+      return new XMLHttpRequest();
+    return false;
+  };
+
+  this.postBody = (arguments[2] || "");
+
+  this.callbackFunction=callbackFunction;
+  this.url=url;
+  this.request = this.getRequest();
+
+  if(this.request) {
+    var req = this.request;
+    req.onreadystatechange = this.bindFunction(this.stateChange, this);
+
+    if (this.postBody!=="") {
+      req.open("POST", url, true);
+      req.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+      req.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+      req.setRequestHeader('Connection', 'close');
+    } else {
+      req.open("GET", url, true);
+    }
+
+    req.send(this.postBody);
+  }
+}
+
+function microAjaxFactory(url, callback)
+{
+  return new microAjax(url, callback);
+}
+
+module.exports = microAjaxFactory;
+
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var microajax = __webpack_require__(3)
+var strip_ansi = __webpack_require__(5)
+
+module.exports = function(callback) {
+    microajax("stats.json", function(response) {
+        if(!!response && response.status == 200) {
+            var stats = JSON.parse(response.responseText)
+
+            stats.errors.forEach(function(error) {
+                (console.error || console.log)(strip_ansi(error))
+            })
+
+            stats.warnings.forEach(function(warning) {
+                (console.warn || console.log)(strip_ansi(warning))
+            })
+
+            if(callback != undefined) {
+                callback(stats)
+            }
+        }
+    })
+}
+
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var ansiRegex = __webpack_require__(1)();
+
+module.exports = function (str) {
+	return typeof str === 'string' ? str.replace(ansiRegex, '') : str;
+};
+
 
 /***/ })
 /******/ ]);
